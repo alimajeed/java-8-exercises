@@ -4,10 +4,8 @@ import com.google.common.collect.ImmutableSet;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -59,6 +57,9 @@ public class Pack_3_Streams_Easy {
         Set<Integer> result = null;
 
         //TODO write your code here
+        result = numbers.stream()
+                .map(number -> number / 2)
+                .collect(Collectors.toSet());
 
         assertThat(result, sameBeanAs(ImmutableSet.of(0, 1, 2)));
     }
@@ -84,6 +85,13 @@ public class Pack_3_Streams_Easy {
         List<Integer> result = null;
 
         //TODO write your code here
+        result = strings.stream()
+                .map(str -> Integer.valueOf(str))
+                .map(num -> num % 13)
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
+
 
         assertThat(result, sameBeanAs(asList(2, 3, 4, 5, 6, 9)));
     }
@@ -106,6 +114,10 @@ public class Pack_3_Streams_Easy {
         int result = 0;
 
         //TODO write your code here
+        result = strings.stream()
+                .map(str -> str.length())
+                .reduce((a,b) -> Math.max(a,b))
+                .orElse(-1);
 
         assertThat(result, sameBeanAs(11));
     }
@@ -131,6 +143,10 @@ public class Pack_3_Streams_Easy {
         IntStream numbers = new Random(0).ints().map(Math::abs);
         List<Integer> result = null;
 
+        result = numbers.filter(n -> n % 17 == 0)
+                .limit(5)
+                .mapToObj(Integer::new)
+                .collect(Collectors.toList());
         //TODO write your code here
 
         assertThat(result, sameBeanAs(asList(938301587, 100082026, 356750287, 798819494, 1412716779)));
@@ -147,6 +163,8 @@ public class Pack_3_Streams_Easy {
         Set<Integer> result = null;
 
         //TODO write your code here
+        result = Arrays.stream(numbers)
+                .collect(Collectors.collectingAndThen(Collectors.toSet(), integers -> Collections.unmodifiableSet(integers)));
 
         assertThat(result, both(instanceOf(nestedClass("UnmodifiableSet")))
                 .and(sameBeanAs(ImmutableSet.of(2, 3, 4, 5, 6, 8))));
@@ -193,6 +211,7 @@ public class Pack_3_Streams_Easy {
         Integer[] result = null;
 
         //TODO write your code here
+        result = stream.toArray(value -> new Integer[value]);
 
         assertThat(result, both(instanceOf(Integer[].class))
                 .and(sameBeanAs(new Integer[] {1, 2, 3})));

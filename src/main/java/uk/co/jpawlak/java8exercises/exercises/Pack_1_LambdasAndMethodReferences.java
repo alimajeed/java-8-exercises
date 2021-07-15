@@ -5,6 +5,7 @@ import org.junit.Test;
 import uk.co.jpawlak.java8exercises.utils.Formatter;
 import uk.co.jpawlak.java8exercises.utils.Node;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -185,7 +186,7 @@ public class Pack_1_LambdasAndMethodReferences {
         // and still having meaningful variables' names
 
         List<Node> list = asList(new Node("c"), new Node("b"), new Node("d"), new Node("a"));
-
+        Collections.sort(list, (o1, o2) -> o1.name().compareTo(o2.name()));
         //TODO write your code here
 
         assertThat(list, sameBeanAs(asList(new Node("a"), new Node("b"), new Node("c"), new Node("d"))));
@@ -206,6 +207,7 @@ public class Pack_1_LambdasAndMethodReferences {
         String result = null;
 
         //TODO write your code here
+        result = formatter.format((Integer amount) -> amount, 30000);
 
         assertThat(result, sameBeanAs("£30,000.00"));
     }

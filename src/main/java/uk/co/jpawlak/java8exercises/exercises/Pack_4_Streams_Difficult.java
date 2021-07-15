@@ -2,17 +2,18 @@ package uk.co.jpawlak.java8exercises.exercises;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import uk.co.jpawlak.java8exercises.utils.Company;
 import uk.co.jpawlak.java8exercises.utils.Employee;
 
 import java.text.DecimalFormat;
-import java.util.List;
-import java.util.Random;
-import java.util.stream.IntStream;
-import java.util.stream.LongStream;
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.stream.*;
 
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static java.util.Arrays.asList;
+import static java.util.stream.LongStream.concat;
 import static uk.co.jpawlak.java8exercises.utils.Employees.allEmployees;
 
 @SuppressWarnings("all")
@@ -29,6 +30,19 @@ public class Pack_4_Streams_Difficult {
         String result = null;
 
         //TODO write your code here
+        result = EMPLOYEES.stream()
+                .collect(Collectors.groupingBy(
+                        employee -> employee.getFirstName() + " " + employee.getSurname(),
+                        LinkedHashMap::new,
+                        Collectors.toList()))
+                .entrySet()
+                .stream()
+                .filter(entry -> entry.getValue().size() >= 2)
+                .findFirst()
+                .map(stringListEntry -> stringListEntry.getKey())
+                .orElse(null);
+
+        //Collector<Employee, ?, LinkedHashMap<String, List<Object>>> objectLinkedHashMapCollector = Collectors.groupingBy(employee -> employee.getFirstName() + " " + employee.getSurname(), LinkedHashMap::new, Collectors.toList());
 
         assertThat(result, sameBeanAs("Holly Davies"));
     }
@@ -41,7 +55,29 @@ public class Pack_4_Streams_Difficult {
         // you can collect to map and then stream over it, however the solution has to be a single statement
 
         long result = 0;
+//        result = EMPLOYEES.stream()
+//                .collect(Collectors.groupingBy
+//                        (o -> o.getHomeAddress().getPostCode().substring(0,2),
+//                        Collectors.counting()
+//                        ))
+//                .values()
+//                .stream()
+//                .filter(aLong -> aLong >= 5)
+//                .count();
 
+        result = EMPLOYEES.stream()
+                .collect(Collectors.groupingBy
+                        (o -> o.getHomeAddress().getPostCode().substring(0, 2)))
+                .entrySet()
+                .stream()
+                .filter(stringListEntry -> stringListEntry.getValue().size() >= 5)
+                .mapToLong(entry -> Long.valueOf(1))
+                .sum();
+
+        /*Collector<Employee, ?, Map<Object, Long>> objectMapCollector = Collectors.groupingBy
+                (o -> o.getHomeAddress().getPostCode().substring(0, 2),
+                        Collectors.counting()
+                );*/
         //TODO write your code here
 
         assertThat(result, sameBeanAs(110L));
@@ -55,6 +91,11 @@ public class Pack_4_Streams_Difficult {
         long result = 0;
 
         //TODO write your code here
+        result = EMPLOYEES.stream()
+                .flatMap(employee -> Stream.of(employee.getHomeAddress(), employee.getCorrespondenceAddress().orElse(null)))
+                .filter(address -> address != null)
+                .distinct()
+                .count();
 
         assertThat(result, sameBeanAs(1820L));
     }
@@ -68,6 +109,16 @@ public class Pack_4_Streams_Difficult {
 
         DecimalFormat decimalFormat = new DecimalFormat("£#,###.00");
         List<String> result = null;
+        result = EMPLOYEES.stream()
+                .collect(Collectors.groupingBy(
+                        emp -> emp.getCompany().getName(),
+                        Collectors.summingInt(
+                                value -> value.getSalary().intValue())))
+                .entrySet()
+                .stream()
+                .sorted((o1, o2) -> o2.getValue().compareTo(o1.getValue()))
+                .map(pair -> pair.getKey() + " - " + decimalFormat.format(pair.getValue()))
+                .collect(Collectors.toList());
 
         //TODO write your code here
 
@@ -98,6 +149,17 @@ public class Pack_4_Streams_Difficult {
         List<String> result = null;
 
         //TODO write your code here
+        result = Pattern.compile("\n").splitAsStream(string)
+                .collect(Collectors.groupingBy(s -> s, Collectors.counting()))
+                .entrySet()
+                .stream()
+                .sorted((o1, o2) -> o1.getKey().compareTo(o2.getKey()))
+                .map(entry -> entry.getKey() + " - " + entry.getValue())
+                .collect(Collectors.toList());
+
+
+
+
 
         assertThat(result, sameBeanAs(asList(
                 "bird - 1",
@@ -118,6 +180,11 @@ public class Pack_4_Streams_Difficult {
         long result = 0;
 
         //TODO write your code here
+        result = Arrays.stream(rows)
+                .asLongStream()
+                .flatMap(row -> Arrays.stream(columns)
+                .mapToLong(col -> row * col))
+                .sum();
 
         assertThat(result, sameBeanAs(4294973013L));
     }
@@ -135,6 +202,15 @@ public class Pack_4_Streams_Difficult {
         int[] result = null;
 
         //TODO write your code here
+        result = LongStream.concat(longs, ints.asLongStream())
+                .map(Math::abs)
+                .sorted()
+                .skip(5)
+                .limit(10)
+                .map(n -> n % 1000)
+                .mapToInt(n -> (int) n)
+                .toArray();
+
 
         assertThat(result, sameBeanAs(new long[] {106, 266, 402, 858, 313, 688, 303, 137, 766, 896}));
     }

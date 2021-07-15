@@ -17,8 +17,8 @@ public class Pack_2_Optionals {
 
     @Test
     public void example_2_basicUsage() {
-        Optional<String> optional = Optional.of("John");
-//        Optional<String> optional = Optional.empty();
+//        Optional<String> optional = Optional.of("John");
+        Optional<String> optional = Optional.empty();
 
         if (optional.isPresent()) {
             System.out.println(optional.get()); // get() will throw exception for empty optional
@@ -31,9 +31,9 @@ public class Pack_2_Optionals {
 
     @Test
     public void example_3_map_filter() {
-        Optional<String> optional = Optional.of("John");
+//        Optional<String> optional = Optional.of("John");
 //        Optional<String> optional = Optional.of("Jack");
-//        Optional<String> optional = Optional.empty();
+        Optional<String> optional = Optional.empty();
 
         optional.map(value -> "Hello " + value + "!").ifPresent(System.out::println);
 
@@ -42,9 +42,9 @@ public class Pack_2_Optionals {
 
     @Test
     public void example_4_flatMap() {
-        Optional<Optional<String>> nestedOptional = Optional.of(Optional.of("Jack"));
+//        Optional<Optional<String>> nestedOptional = Optional.of(Optional.of("Jack"));
 //        Optional<Optional<String>> nestedOptional = Optional.of(Optional.empty());
-//        Optional<Optional<String>> nestedOptional = Optional.empty();
+        Optional<Optional<String>> nestedOptional = Optional.empty();
 
         Optional<String> flattenedOptional = nestedOptional.flatMap(optional -> optional);
 
